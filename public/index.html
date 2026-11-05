@@ -2278,7 +2278,8 @@ function setMoment(i) {
 function updateMoments(p) { setMoment(Math.min(5, Math.floor(clamp(p, 0, .9999) * 6))); }
 
 /* ---------------- TRANSITION ---------------- */
-const stages = $$("#stages .stage"), transCopy = $("#transCopy"), revealBrand = $("#revealBrand");
+const stages = $$("#stages .stage"), stagesEl = $("#stages"), transCopy = $("#transCopy"), revealBrand = $("#revealBrand");
+const mqTransSmall = window.matchMedia("(max-width: 760px)");
 const TRANS_TXT = ["Todo sentimento deixa uma marca. <em>Única, como uma digital.</em>", "Sinais e evidências tornam essa marca <em>observável.</em>", "A inteligência a transforma em <em>estrutura.</em>"];
 let transIdx = -1;
 function updateTransition(p) {
@@ -2288,6 +2289,8 @@ function updateTransition(p) {
   const brand = ease(clamp((p - .7) / .18));
   transCopy.style.opacity = (1 - clamp((p - .62) / .1)).toFixed(3);
   revealBrand.style.opacity = brand.toFixed(3);
+  // on phones the stacked stages sit behind the logo, so they give way to it
+  stagesEl.style.opacity = mqTransSmall.matches ? (1 - ease(clamp((p - .64) / .1))).toFixed(3) : "";
   revealBrand.style.transform = `scale(${(1.06 - brand * .06).toFixed(4)})`;
   field.set({ q: smooth(clamp((p - .18) / .48)), alpha: lerp(.5, .2, brand), scale: lerp(1, .82, p), cx: .5, cy: .5, warm: 0, speed: lerp(.12, .03, p), amp: .36, jitter: 0, ripple: 0, breath: 0, follow: 0, twist: 0, cursor: lerp(1, .3, p), ink: 0 });
 }
