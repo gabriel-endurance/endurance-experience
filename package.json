@@ -1,0 +1,5 @@
+{
+  "name": "endurance-experience",
+  "private": true,
+  "engines": { "node": ">=20" }
+}

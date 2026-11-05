@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Endurance — Painel de acessos</title>
+<style>
+  :root{--night:#131c28;--night-2:#1b2839;--line:#364354;--cream:#ece8dd;--sand:#c9c2b1;--orange:#f7af65}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--night);color:var(--cream);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:clamp(20px,4vw,56px)}
+  header{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:28px}
+  h1{font:400 clamp(28px,4vw,44px)/1 Georgia,serif}
+  .cap{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--sand)}
+  .stats{display:flex;gap:28px;flex-wrap:wrap}
+  .stats b{display:block;font:400 28px/1 Georgia,serif;color:var(--orange);margin-top:6px}
+  table{width:100%;border-collapse:collapse}
+  th,td{text-align:left;padding:14px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+  th{font-weight:500}
+  td.id{font-family:ui-monospace,Menlo,monospace;letter-spacing:.06em}
+  tr:hover td{background:var(--night-2)}
+  .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:#4a5668;margin-right:8px}
+  .dot.on{background:#6fcf8f;box-shadow:0 0 0 4px rgba(111,207,143,.15)}
+  .wrap{overflow-x:auto}
+  .empty,.err{padding:40px 0;color:var(--sand)}
+  .err{color:#e8735a}
+  footer{margin-top:18px;color:var(--sand);font-size:12px}
+</style>
+</head>
+<body>
+<header>
+  <div><p class="cap">Endurance · Admin</p><h1>Acessos à experiência</h1></div>
+  <div class="stats">
+    <div><span class="cap">Acessos</span><b id="sTotal">—</b></div>
+    <div><span class="cap">Online agora</span><b id="sOnline">—</b></div>
+    <div><span class="cap">Tempo médio</span><b id="sAvg">—</b></div>
+  </div>
+</header>
+<div class="wrap">
+  <table>
+    <thead><tr><th class="cap">ID do acesso</th><th class="cap">Data</th><th class="cap">Hora</th><th class="cap">Tempo na experiência</th><th class="cap">Status</th></tr></thead>
+    <tbody id="rows"></tbody>
+  </table>
+</div>
+<p class="empty" id="msg" hidden></p>
+<footer>Atualiza a cada 20 segundos · horário local deste navegador · <span id="upd"></span></footer>
+<script>
+const fmtDur = s => { const h = Math.floor(s / 3600), m = Math.floor(s % 3600 / 60), r = s % 60; return h ? `${h}h ${String(m).padStart(2, "0")}min` : m ? `${m}min ${String(r).padStart(2, "0")}s` : `${r}s`; };
+const cell = (txt, cls) => { const td = document.createElement("td"); td.textContent = txt; if (cls) td.className = cls; return td; };
+async function load() {
+  const msg = document.getElementById("msg");
+  try {
+    const res = await fetch("/api/admin/accesses", { cache: "no-store" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const { accesses } = await res.json();
+    const tbody = document.getElementById("rows"); tbody.replaceChildren();
+    accesses.forEach(a => {
+      const d = new Date(a.started_at), tr = document.createElement("tr");
+      tr.append(cell(a.id, "id"), cell(d.toLocaleDateString("pt-BR")), cell(d.toLocaleTimeString("pt-BR")), cell(fmtDur(a.seconds)));
+      const st = cell(a.online ? "Na experiência" : "Saiu"); const dot = document.createElement("span"); dot.className = "dot" + (a.online ? " on" : ""); st.prepend(dot); tr.append(st);
+      tbody.append(tr);
+    });
+    document.getElementById("sTotal").textContent = accesses.length;
+    document.getElementById("sOnline").textContent = accesses.filter(a => a.online).length;
+    document.getElementById("sAvg").textContent = accesses.length ? fmtDur(Math.round(accesses.reduce((t, a) => t + a.seconds, 0) / accesses.length)) : "—";
+    msg.hidden = accesses.length > 0; msg.className = "empty"; msg.textContent = "Nenhum acesso registrado ainda.";
+    document.getElementById("upd").textContent = `última atualização ${new Date().toLocaleTimeString("pt-BR")}`;
+  } catch (e) { msg.hidden = false; msg.className = "err"; msg.textContent = `Não foi possível carregar os acessos (${e.message}).`; }
+}
+load(); setInterval(load, 20000);
+</script>
+</body>
+</html>

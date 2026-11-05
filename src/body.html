@@ -1,0 +1,435 @@
+<canvas id="field" aria-hidden="true"></canvas>
+<div class="grain" aria-hidden="true"></div>
+<div class="progress" id="progress"></div>
+
+<!-- ================= NAV ================= -->
+<header class="nav" id="nav">
+  <button class="logo-slot" data-goto="act-1" aria-label="Endurance — voltar ao início">
+    <img class="logo-img on-night" src="assets/endurance-horizontal-cream.png" alt="Endurance">
+    <img class="logo-img on-paper" src="assets/endurance-horizontal-navy-no-tagline.png" alt="" aria-hidden="true">
+  </button>
+  <div class="nav-mid">
+    <div class="ticks" id="ticks" role="navigation" aria-label="Atos"></div>
+    <span class="cap sm act-label" id="actLabel">Ato I — Before everything</span>
+  </div>
+  <div class="nav-right">
+    <button class="sound cap sm" id="soundBtn" aria-pressed="true" aria-label="Ligar ou desligar o som"><span class="eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span id="soundLbl">Som</span></button>
+    <button class="cap sm" id="menuBtn" aria-controls="menu">Índice</button>
+  </div>
+</header>
+
+<!-- ================= ATO 00 — PRIVATE INVITATION ================= -->
+<section id="gate" aria-label="Convite privado">
+  <div class="gate-top">
+    <img class="gate-logo" src="assets/endurance-horizontal-navy.png" alt="Endurance — Feel Different">
+    <span class="cap sm">Private invitation · Nº <span id="inviteNo">0427</span></span>
+  </div>
+  <div class="gate-body">
+    <div class="gate-copy">
+      <span class="cap sm">Ato 00</span>
+      <h1 style="margin-top:18px">Something is waiting for you <em>to feel</em> it first.</h1>
+      <p>Este é um acesso individual e temporário a uma experiência da Endurance que ainda não foi amplamente revelada.</p>
+    </div>
+    <div class="seal" aria-hidden="true">
+      <svg class="seal-ring" viewBox="0 0 200 200"><defs><path id="sealPath" d="M100,100 m-92,0 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+        <text font-family="Instrument Sans" font-size="7.4" letter-spacing="3.2" fill="#2c3b4e" opacity=".7"><textPath href="#sealPath">AI LAB FOR HUMAN INTELLIGENCE · FEEL FIRST · UNDERSTAND NEXT · IMAGINE WHAT FOLLOWS ·</textPath></text></svg>
+      <canvas id="sealCanvas"></canvas>
+    </div>
+    <form class="gate-form" id="gateForm" autocomplete="off" novalidate>
+      <label class="field-row"><span class="cap sm">Seu nome</span><input id="gName" name="name" placeholder="Como devemos chamá-lo" maxlength="40"></label>
+      <label class="field-row"><span class="cap sm">Código do convite</span><input id="gCode" name="code" placeholder="ENDR-0000" maxlength="24"></label>
+      <label class="field-row"><span class="cap sm">Chave de acesso</span><input id="gKey" name="key" type="password" placeholder="••••••" maxlength="40"></label>
+      <button class="btn solid" type="submit">Entrar <span class="arr">→</span></button>
+      <div class="gate-err" id="gateErr" role="alert"></div>
+    </form>
+  </div>
+  <div class="gate-bot">
+    <span class="cap sm">Acesso individual · <span id="validUntil">08 horas</span> após a assinatura do termo</span>
+    <p class="gate-note">As credenciais são verificadas no servidor. Cada acesso recebe um identificador próprio, e o início e o tempo de permanência são registrados.</p>
+  </div>
+</section>
+
+<main id="experience">
+
+  <!-- ================= ATO I — BEFORE EVERYTHING ================= -->
+  <section class="pin" id="act-1" data-scene="act1" data-act="1" style="height:720vh">
+    <div class="stick">
+      <div class="phrases">
+        <div class="phrase" data-r="0.04,0.20"><span class="cap pre">Before the</span><span class="big"><span class="w">action.</span></span></div>
+        <div class="phrase" data-r="0.20,0.36"><span class="cap pre">Before the</span><span class="big"><span class="w">decision.</span></span></div>
+        <div class="phrase" data-r="0.36,0.52"><span class="cap pre">Before the</span><span class="big"><span class="w">reaction.</span></span></div>
+        <div class="phrase" data-r="0.52,0.70"><span class="mid"><span class="w">There</span> <span class="w">is</span> <span class="w">something</span> <em class="w">human.</em></span></div>
+        <div class="phrase" data-r="0.70,0.86"><span class="mid"><span class="w">Something</span> <span class="w">we</span> <em class="w">feel.</em></span></div>
+        <div class="phrase" data-r="0.86,1.01"><span class="mid"><span class="w">That's</span> <span class="w">where</span> <span class="w">we</span> <span class="w">begin.</span></span></div>
+      </div>
+      <div class="scroll-hint cap sm" id="scrollHint"><span>Role devagar</span><i></i></div>
+    </div>
+  </section>
+
+  <!-- ================= MOMENTS ================= -->
+  <section class="pin" id="moments" data-scene="moments" data-act="1" style="height:560vh">
+    <div class="stick">
+      <div class="corner tr cap sm"><span class="mono-num" id="momentCount">01 / 06</span></div>
+      <div class="moment-stage">
+        <div class="moment-guide"><span class="cap sm">Seis instantes humanos</span><p class="moment-q">O que acontece dentro de uma pessoa quando ela vive este instante?</p></div>
+        <div class="moment-word" id="momentWord" aria-live="polite">
+          <span class="on">Um olhar.</span><span>Uma expectativa.</span><span>Uma lembrança.</span><span>Um medo.</span><span>Uma conquista.</span><span>Um arrepio.</span>
+        </div>
+        <ol class="moment-list" id="momentList"></ol>
+      </div>
+      <div class="corner bl cap sm readout" id="readout" aria-hidden="true">
+        <span>amplitude <b id="roA">0.00</b></span><span>frequência <b id="roF">0.00</b></span><span>ritmo <b id="roR">—</b></span>
+      </div>
+      <div class="corner br cap sm muted">Mova o cursor · o campo responde</div>
+    </div>
+  </section>
+
+  <!-- ================= ATO II — TRANSITION ================= -->
+  <section class="pin" id="act-2" data-scene="transition" data-act="2" style="height:340vh">
+    <div class="stick">
+      <p class="trans-copy" id="transCopy">Todo sentimento deixa uma marca. <em>Única, como uma digital.</em></p>
+      <div class="reveal-brand" id="revealBrand">
+        <div>
+          <img class="reveal-logo" src="assets/endurance-vertical-cream.png" alt="Endurance">
+          <div class="tagline">AI Lab for Human Intelligence</div>
+        </div>
+      </div>
+      <div class="stages" id="stages">
+        <div class="stage"><span class="cap sm">01 · humano</span><span class="serif">Sentimento</span></div>
+        <div class="stage"><span class="cap sm">02 · evidência</span><span class="serif">Sinal</span></div>
+        <div class="stage"><span class="cap sm">03 · inteligência</span><span class="serif">Estrutura</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ATO II — THESIS ================= -->
+  <section class="paper-sec t-hero" id="thesis" data-scene="thesis" data-act="2" data-theme="paper">
+    <div class="eyebrow cap sm">Quem somos</div>
+    <p class="who-tag cap" data-reveal>AI Lab for Human Intelligence</p>
+    <h2 class="identity-h kin" id="identityH"><span class="kw" style="transition-delay:120ms">A</span> <span class="kw" style="transition-delay:175ms">Endurance</span> <span class="kw" style="transition-delay:230ms">é</span> <span class="kw" style="transition-delay:285ms">um</span> <span class="kw" style="transition-delay:340ms">laboratório</span> <span class="kw" style="transition-delay:395ms">de</span> <span class="kw" style="transition-delay:450ms">pesquisa</span> <span class="kw" style="transition-delay:505ms">e</span> <span class="kw" style="transition-delay:560ms">desenvolvimento</span> <span class="kw" style="transition-delay:615ms">dedicado</span> <span class="kw" style="transition-delay:670ms">à</span> <span class="kw" style="transition-delay:725ms">compreensão</span> <span class="kw" style="transition-delay:780ms">e</span> <span class="kw" style="transition-delay:835ms">à</span> <span class="kw" style="transition-delay:890ms">codificação</span> <span class="kw" style="transition-delay:945ms">dos</span> <em class="it kw kw-hi" style="transition-delay:1200ms">sentimentos humanos.</em></h2>
+    <div class="t-hero-foot cap sm" data-reveal><span>Um laboratório de pesquisa, inteligência e desenvolvimento tecnológico</span><span class="t-scroll">Continue <i></i></span></div>
+  </section>
+
+  <!-- PRINCÍPIO — cinematic beat -->
+  <section class="pin" id="principle" data-scene="principle" data-act="2" style="height:300vh">
+    <div class="stick pr-stage">
+      <div class="pr-mask" id="prMask"><img src="assets/ref-ship-night-ice.jpg" alt="Tripulação caminhando no gelo em direção ao navio Endurance, à noite"></div>
+      <div class="pr-shade" id="prShade"></div>
+      <div class="corner tl cap sm pr-label"><b>Nosso princípio</b></div>
+      <div class="pr-copy">
+        <span class="ln" id="prL1">We don't start with what people <span class="strike" id="prStrike">do.</span></span>
+        <span class="ln" id="prL2">We start with what they <em class="it">feel.</em></span>
+      </div>
+      <div class="corner br cap sm pr-cap">Imagem de referência · ENDURANCE NOVA ID</div>
+    </div>
+  </section>
+
+  <section class="flow paper-sec" id="thesis-body" data-scene="thesisbody" data-act="2" data-theme="paper">
+    <div class="t-row t-first">
+      <span class="t-label cap sm" data-reveal><b>01</b>Como</span>
+      <div class="t-body">
+        <p class="t-lead" data-reveal>Utilizamos inteligência artificial como motor de <em class="it">pesquisa, desenvolvimento e aplicação.</em></p>
+        <div class="flow3" data-reveal>
+          <div class="f-rail" aria-hidden="true"><i class="f-pulse"></i></div>
+          <div class="f-step"><span class="f-node"></span><span class="cap sm">Pesquisa</span><p class="serif">Investigamos</p><p class="f-d">os sentimentos humanos e os sinais que os revelam.</p></div>
+          <div class="f-step"><span class="f-node"></span><span class="cap sm">Desenvolvimento</span><p class="serif">Codificamos</p><p class="f-d">essa dimensão humana em tecnologias e inteligência estruturada.</p></div>
+          <div class="f-step"><span class="f-node"></span><span class="cap sm">Aplicação</span><p class="serif">Construímos</p><p class="f-d">projetos e soluções que transformam essa inteligência em valor.</p></div>
+        </div>
+        <p class="f-motor cap sm" data-reveal><i></i>Inteligência artificial · o motor que atravessa cada etapa</p>
+        <p class="t-text" data-reveal>Nosso propósito é maior do que analisar consumidores ou oferecer ferramentas de marketing.</p>
+      </div>
+    </div>
+
+    <div class="t-row t-focus">
+      <span class="t-label cap sm" data-reveal><b>02</b>Nosso foco</span>
+      <div class="t-body">
+        <p class="focus-pre" data-reveal>O comportamento é uma das possíveis manifestações da experiência emocional.</p>
+        <p class="focus-h" data-reveal>Nosso foco está no que vem antes: os <em class="it">sentimentos fundamentais</em> que podem influenciar percepções, experiências e decisões.</p>
+      </div>
+    </div>
+    <figure class="ice ice-close" data-reveal aria-label="O comportamento é o que se vê; os sentimentos fundamentais estão abaixo da superfície">
+      <svg viewBox="0 0 1000 310" preserveAspectRatio="xMidYMid meet" aria-hidden="true">
+        <path class="tip" d="M430 92 L468 44 L492 64 L528 26 L556 58 L590 92"/>
+        <line class="water" x1="0" y1="92" x2="1000" y2="92"/>
+        <g class="deep"><path d="M465,180 C465,155.8 541.0,156.9 545,181.1 C545.8,204.2 471.0,203.76 465,180Z" style="opacity:1.00"/><path d="M425,180 C425,136.0 577.0,138.0 585,182.0 C586.6,224.0 437.0,223.2 425,180Z" style="opacity:0.88"/><path d="M383,180 C383,116.19999999999999 614.8,119.1 627,182.9 C629.44,243.8 401.3,242.64 383,180Z" style="opacity:0.76"/><path d="M339,180 C339,96.39999999999999 654.4,100.2 671,183.8 C674.3199999999999,263.6 363.9,262.08000000000004 339,180Z" style="opacity:0.64"/><circle class="core" cx="505" cy="180" r="5"/></g>
+        <text class="lbl" x="0" y="52">O que se vê</text><text class="big" x="0" y="80">Comportamento</text>
+        <text class="lbl" x="0" y="140">O que move</text><text class="big hi" x="0" y="170">Sentimentos fundamentais</text>
+        <text class="lbl r" x="1000" y="140">Influenciam</text>
+        <text class="sm r" x="1000" y="170">percepções</text><text class="sm r" x="1000" y="196">experiências</text><text class="sm r" x="1000" y="222">decisões</text>
+      </svg>
+      <figcaption class="ice-cap"><span><b>O que se vê</b>Comportamento</span><span class="hi"><b>O que move</b>Sentimentos fundamentais, que influenciam percepções, experiências e decisões</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ================= ATO III — HUMAN INTELLIGENCE ENGINE ================= -->
+  <section class="engine" id="act-3" data-scene="engine" data-act="3">
+    <div class="eyebrow cap sm">Ato III — Como nossa inteligência funciona</div>
+    <div class="engine-head">
+      <h2>Human Intelligence <em class="it">Engine</em></h2>
+      <div>
+        <p><b class="hl">O modelo cognitivo da Endurance.</b> Ele transforma sinais humanos em um modelo vivo de comportamento, relacionando sentimentos, estados emocionais, decisões e impactos de negócio, e alimenta continuamente a inteligência usada para criar, simular e validar novas experiências.</p>
+        <p style="margin-top:14px"><span class="demo-badge cap sm">Valores demonstrativos fictícios</span></p>
+      </div>
+    </div>
+    <div class="engine-grid">
+      <div class="instrument" id="instrument" aria-label="Visualização interativa do Human Intelligence Engine">
+        <div class="hie-legend" aria-hidden="true">
+          <span><i class="lg-state"></i>Estado emocional · intensidade</span>
+          <span><i class="lg-beh"></i>Comportamento · probabilidade</span>
+          <span><i class="lg-imp"></i>Impacto no negócio · influência estimada</span>
+        </div>
+      </div>
+      <div>
+        <span class="cap sm muted">Selecione um sentimento fundamental · ou clique nos círculos do gráfico</span>
+        <div class="feel-select" id="feelSelect" role="tablist"></div>
+        <div class="layers" id="layers" aria-live="polite"></div>
+        <p class="engine-note">As camadas não formam uma cadeia de causalidade universal: comportamentos e impactos são hipóteses probabilísticas, contextualizadas e validadas. A taxonomia segue o modelo da Endurance; intensidades, probabilidades e impactos exibidos são fictícios.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= THE LAB ================= -->
+  <section class="lab" id="lab" data-scene="lab" data-act="3">
+    <div class="lab-intro">
+      <div><span class="cap sm lab-eyebrow">O que fazemos · ecossistema tecnológico</span><h3>Cinco frentes, cada uma nascida de uma linha de pesquisa do laboratório.</h3></div>
+      <p>Elas podem ser usadas sozinhas ou combinadas dentro de um projeto. <span class="lab-analogy">Atlas é o termômetro, Gargantua é o túnel de vento, Tesseract é o simulador de voo e Ben é a peça que encaixa tudo isso no motor do cliente.</span></p>
+    </div>
+    <p class="lab-cue cap sm">Passe o mouse ou toque em uma frente para ver o que ela faz</p>
+    <div class="bench" id="bench"></div>
+    <div class="demo-cta" data-reveal>
+      <button class="demo-thumb" data-demo aria-label="Assistir à demonstração do Gargantua">
+        <img src="assets/gargantua-poster.jpg" alt="">
+        <span class="demo-play" aria-hidden="true">▶</span>
+      </button>
+      <div class="demo-copy">
+        <span class="cap sm">Solução Endurance · Gargantua</span>
+        <h4>Seu público sente antes de comentar. <em class="it">Agora você vê.</em></h4>
+        <p>Veja a plataforma que desenvolvemos em ação: campanhas, sentimento medido a cada hora e o Human Intelligence Engine aplicado ao dia a dia de uma marca.</p>
+        <button class="btn warm" data-demo>Assistir à demonstração <span class="arr">▶</span></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ATO IV — WHAT BECOMES POSSIBLE ================= -->
+  <section class="cases-intro" id="act-4" data-scene="cases" data-act="4">
+    <div class="eyebrow cap sm">Ato IV — O que fazemos na prática</div>
+    <h2 data-reveal>What becomes <em class="it">possible.</em></h2>
+    <p data-reveal style="margin-top:30px;max-width:54ch;color:var(--muted-night);font-size:18px;line-height:1.55">Oito pesquisas que mostram o que a nossa inteligência revela quando lê o que as pessoas sentem. Cada um começa por uma pergunta sobre pessoas. Abra o dossiê para ver o desafio, o que investigamos e o que a análise revelou, ou siga a narrativa.</p>
+    <div class="apply-note" data-reveal><span class="cap sm">Pesquisas realizadas</span><p>Análises da Endurance sobre conteúdos e conversas públicas, feitas para demonstrar a nossa inteligência. As marcas citadas <b>não são clientes</b> da Endurance.</p></div>
+  </section>
+  <section class="carousel" id="cases" data-scene="case" data-act="4" aria-roledescription="carrossel" aria-label="Pesquisas realizadas">
+    <aside class="cz-menu" id="czMenu" aria-label="Pesquisas por temática"></aside>
+    <div class="cz-main">
+      <div class="cz-stage" id="czStage"></div>
+      <div class="cz-nav">
+        <div class="cz-progress"><span class="cap sm"><b id="czCount">01 / 06</b> · <span id="czTheme"></span></span><div class="cz-track"><i id="czBar"></i></div></div>
+        <div class="cz-arrows">
+          <button class="cz-step" id="czPrev" aria-label="Pesquisa anterior"><span class="cz-arrow">←</span><span class="cz-step-txt"><small>Anterior</small><em id="czPrevName"></em></span></button>
+          <button class="cz-step next" id="czNext" aria-label="Próxima pesquisa"><span class="cz-step-txt"><small>Próxima</small><em id="czNextName"></em></span><span class="cz-arrow">→</span></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ATO V — HOW WE BUILD (LOOP) ================= -->
+  <section class="pin" id="act-5" data-scene="loop" data-act="5" data-theme="paper" style="height:520vh">
+    <div class="stick">
+      <div class="loop-stage">
+        <div class="loop-copy">
+          <div class="eyebrow cap sm">Ato V — Como construímos com você</div>
+          <h2>LOOP. Discovery que vira <em class="it">projeto.</em></h2>
+          <p class="loop-lede">Nossa metodologia para descobrir, com você, o que faz sentido construir.</p>
+          <div class="loop-step" id="loopStep">
+            <div class="on"><span class="cap sm">01 · Compreender</span><p class="serif">Começamos pelo desafio.</p><p>Partimos dos desafios organizacionais, não de uma solução pronta. O que precisa mudar e para quem.</p></div>
+            <div><span class="cap sm">02 · Observar</span><p class="serif">Olhamos para pessoas.</p><p>Investigamos jornadas, pessoas, contextos e experiências.</p></div>
+            <div><span class="cap sm">03 · Refletir</span><p class="serif">Encontramos o fator humano.</p><p>Identificamos onde fatores humanos influenciam resultados relevantes e priorizamos oportunidades.</p></div>
+            <div><span class="cap sm">04 · Construir</span><p class="serif">Estruturamos o que fazer.</p><p>Desenvolvemos hipóteses e estruturamos um projeto com objetivos, entregáveis e indicadores.</p></div>
+            <div><span class="cap sm">↻ · Iterar</span><p class="serif">E começamos de novo.</p><p>O LOOP é iterativo: cada volta refina o entendimento e a direção do projeto.</p></div>
+          </div>
+        </div>
+        <svg class="loop-svg" id="loopSvg" viewBox="0 0 600 600" aria-hidden="true"></svg>
+      </div>
+    </div>
+  </section>
+
+  <section class="flow paper-sec" id="loop-out" data-scene="loopout" data-act="5" data-theme="paper">
+    <div class="outputs">
+      <h3 data-reveal>O discovery pode resultar em</h3>
+      <ol class="out-list" data-reveal>
+        <li>Mapa de desafios</li><li>Oportunidades priorizadas</li><li>Hipóteses</li><li>Escopo de projeto</li><li>Indicadores</li><li>Critérios de sucesso</li>
+      </ol>
+    </div>
+    <div class="phases">
+      <h3 data-reveal>Depois, conforme o projeto</h3>
+      <div class="phase-line" id="phaseLine">
+        <div class="ph"><span class="cap sm">01</span><p class="serif">Pesquisa</p></div>
+        <div class="ph"><span class="cap sm">02</span><p class="serif">Prototipagem</p></div>
+        <div class="ph"><span class="cap sm">03</span><p class="serif">Desenvolvimento</p></div>
+        <div class="ph"><span class="cap sm">04</span><p class="serif">Integração</p></div>
+        <div class="ph"><span class="cap sm">05</span><p class="serif">Validação</p></div>
+        <div class="ph"><span class="cap sm">06</span><p class="serif">Evolução</p></div>
+      </div>
+    </div>
+    <div class="split2" data-reveal>
+      <div><span class="cap sm">Arquitetura</span><p class="serif">Human Intelligence Engine</p><p>Nossa arquitetura de inteligência humana: como investigamos sentimentos e os transformamos em inteligência estruturada.</p></div>
+      <div><span class="cap sm">Metodologia</span><p class="serif">LOOP</p><p>Nossa metodologia para descobrir e estruturar projetos com os clientes: onde aplicar essa inteligência e o que construir.</p></div>
+    </div>
+    <p class="client-note" data-reveal>Você não precisa chegar com uma solução. Pode chegar com um problema, uma oportunidade ou <em class="it">uma pergunta.</em></p>
+  </section>
+
+  <!-- ================= ATO VI — WHAT WOULD YOU BUILD? ================= -->
+  <section class="build" id="act-6" data-scene="build" data-act="6">
+    <div class="eyebrow cap sm">Ato VI — O convite</div>
+    <h2 class="build-q" id="buildQ"></h2>
+    <p class="build-lede">Descreva um desafio, uma ideia ou uma oportunidade. Nosso agente explora caminhos possíveis a partir do que a Endurance faz. É um ponto de partida para a conversa, não uma proposta.</p>
+    <div class="composer">
+      <label for="idea" class="cap sm">Seu desafio</label>
+      <textarea id="idea" placeholder="Ex.: Queremos entender o que nossos clientes sentem no momento em que desistem de uma compra…" maxlength="1800"></textarea>
+      <div class="composer-bar">
+        <div class="examples" id="examples"></div>
+        <button class="btn warm" id="explore">Explorar possibilidades <span class="arr">→</span></button>
+      </div>
+      <div class="ai-status" id="aiStatus" aria-live="polite"></div>
+    </div>
+    <div class="sheet" id="sheet" aria-live="polite"></div>
+    <div class="invite">
+      <h3>Let's find out what is worth <em class="it">building.</em></h3>
+      <div>
+        <p style="color:var(--muted-night);margin-bottom:20px">O próximo passo é uma conversa estratégica com o time da Endurance, começando pela sua pergunta.</p>
+        <button class="btn light" id="talkBtn">Solicitar conversa <span class="arr">→</span></button>
+        <div id="talkOut" class="ai-status"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span class="cap sm">Endurance — AI Lab for Human Intelligence</span>
+  <span class="cap sm">Experiência privada · acesso de <span id="footName">convidado</span> · acesso até <span id="footValid">—</span></span>
+  <span class="cap sm">v1 · protótipo navegável</span>
+</footer>
+
+
+
+<!-- ================= ACCESS CLOCK — floating countdown ================= -->
+<div class="clock" id="clock" role="timer" aria-live="off" aria-label="Tempo restante de acesso">
+  <svg class="clock-ring" viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.5" class="bg"/><circle cx="18" cy="18" r="15.5" class="fg" id="clockArc"/></svg>
+  <div class="clock-txt"><span class="cap sm">Acesso expira em</span><b class="mono-num" id="clockTime">08:00:00</b></div>
+</div>
+<div class="expired" id="expired" role="alertdialog" aria-modal="true" aria-labelledby="expT" aria-hidden="true">
+  <div class="expired-card">
+    <span class="cap sm" style="color:var(--orange)">Acesso encerrado</span>
+    <h2 id="expT">Seu tempo de acesso terminou.</h2>
+    <p>O prazo de 08 horas para esta experiência confidencial chegou ao fim. Para continuar, solicite um novo convite ao time da Endurance.</p>
+    <button class="btn light" id="expBack">Voltar à tela de acesso <span class="arr">→</span></button>
+  </div>
+</div>
+
+
+<!-- ================= CONTEXTUAL HINT ================= -->
+<div class="hint" id="hint" role="status" aria-live="polite"><span class="hint-ic" aria-hidden="true"><i></i></span><span id="hintTxt"></span></div>
+
+<!-- ================= ASK ENDURANCE — floating button ================= -->
+<button class="fab" id="askBtn" aria-controls="companion" aria-label="Ask Endurance — abrir assistente">
+  <span class="fab-ic"><svg class="fab-star" viewBox="0 0 100 100" aria-hidden="true"><path d="M50 3Q63 37 97 50Q63 63 50 97Q37 63 3 50Q37 37 50 3Z"/></svg></span><span class="fab-lbl cap sm">Ask Endurance</span>
+</button>
+
+<!-- ================= COMPANION ================= -->
+<aside class="companion" id="companion" aria-label="Assistente da Endurance" aria-hidden="true">
+  <div class="comp-head">
+    <div class="row"><span class="cap sm" style="color:var(--accent)">Caderno de laboratório</span><button class="close-x" id="compClose" aria-label="Fechar">×</button></div>
+    <h4>Ask Endurance</h4>
+    <div class="ctx cap sm" id="compCtx">Você está em: —</div>
+  </div>
+  <div class="comp-body" id="compBody"></div>
+  <div class="comp-foot">
+    <form id="compForm"><textarea id="compInput" rows="1" placeholder="Pergunte sobre o que está vendo…"></textarea><button class="send" aria-label="Enviar">→</button></form>
+    <small id="compNote">Respostas geradas por IA a partir do posicionamento da Endurance. Para detalhes de projetos, fale com o time.</small>
+  </div>
+</aside>
+
+
+<!-- ================= CONSENT — termo de confidencialidade ================= -->
+<div class="consent" id="consent" role="dialog" aria-modal="true" aria-labelledby="cTitle" aria-hidden="true">
+  <div class="consent-card">
+    <div class="consent-head">
+      <span class="cap sm c-flag">Acesso confidencial</span>
+      <span class="cap sm muted">Convite Nº <span id="cInvite">—</span></span>
+    </div>
+    <h2 id="cTitle">Antes de entrar, um acordo de confiança.</h2>
+    <div class="c-alert">
+      <b>Conteúdo estritamente confidencial.</b> Esta experiência apresenta pesquisas, metodologias, tecnologias e projetos da Endurance que ainda não foram tornados públicos. O acesso é pessoal, intransferível e temporário.
+    </div>
+    <div class="c-window">
+      <div class="c-window-clock"><span class="mono-num">08:00:00</span></div>
+      <p><b>Você terá 08 horas para consumir este conteúdo.</b> A contagem começa no momento da assinatura e segue visível no canto da tela durante toda a experiência. Ao final do prazo, o acesso é encerrado.</p>
+    </div>
+    <div class="c-terms" tabindex="0" aria-label="Termo de confidencialidade">
+      <p class="cap sm">Termo de confidencialidade e consentimento <span class="ph-tag">minuta · revisar com o jurídico</span></p>
+      <ol>
+        <li><b>Confidencialidade.</b> Todo o conteúdo desta experiência, incluindo textos, imagens, vídeos, dados, metodologias, tecnologias e cases, é informação confidencial da Endurance.</li>
+        <li><b>Uso restrito.</b> O conteúdo destina-se exclusivamente à avaliação de uma possível relação comercial, de parceria ou de investimento com a Endurance.</li>
+        <li><b>Não divulgação.</b> Você se compromete a não copiar, gravar, capturar a tela, reproduzir, compartilhar ou divulgar, total ou parcialmente, o conteúdo a terceiros sem autorização prévia e por escrito.</li>
+        <li><b>Acesso individual e temporário.</b> Suas credenciais são pessoais e intransferíveis. O acesso é válido por 08 horas a partir da assinatura deste termo e pode ser revogado a qualquer momento.</li>
+        <li><b>Registro de acesso.</b> Seu acesso e o aceite deste termo poderão ser registrados (nome, data e hora), de acordo com a política de privacidade da Endurance e com a legislação aplicável.</li>
+        <li><b>Vigência.</b> As obrigações de confidencialidade permanecem válidas mesmo após o término do seu acesso.</li>
+      </ol>
+    </div>
+    <label class="c-check"><input type="checkbox" id="cAgree"> <span>Li e concordo com o termo de confidencialidade.</span></label>
+    <label class="c-check"><input type="checkbox" id="cAware"> <span>Entendo que meu acesso é individual, intransferível e pode ser registrado.</span></label>
+    <div class="c-sign">
+      <label class="field-row"><span class="cap sm">Nome completo · assinatura eletrônica</span><input id="cName" maxlength="80" autocomplete="name" placeholder="Digite seu nome completo"></label>
+      <div class="c-sig"><span class="c-sig-preview empty" id="cSigPreview">Sua assinatura</span><span class="cap sm muted" id="cDate">—</span></div>
+    </div>
+    <div class="c-actions">
+      <button class="btn" type="button" id="cDecline">Recusar</button>
+      <button class="btn solid" type="button" id="cSign" disabled>Assinar e continuar <span class="arr">→</span></button>
+    </div>
+    <p class="c-note" id="cErr" role="alert"></p>
+    <p class="c-note">Ao assinar, o início do seu acesso e o tempo de permanência são registrados pela Endurance.</p>
+  </div>
+</div>
+
+<!-- ================= INTRO VIDEO ================= -->
+<div class="intro" id="intro" aria-hidden="true" aria-label="Vídeo de abertura">
+  <video id="introVideo" src="assets/manifesto.mp4" poster="assets/manifesto-poster.jpg" playsinline preload="metadata"></video>
+  <div class="v-top"><img src="assets/endurance-horizontal-cream.png" alt="Endurance"><span class="cap sm">Manifesto</span></div>
+  <button class="v-big" id="vBig" aria-label="Reproduzir">▶</button>
+  <div class="v-bar-wrap">
+    <div class="v-ctrl">
+      <button id="vPlay" class="v-btn v-play" aria-label="Pausar"><i></i></button>
+      <button id="vMute" class="v-btn v-mute" aria-label="Silenciar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="w1" d="M16 9.5a4 4 0 0 1 0 5"/><path class="w2" d="M18.5 7a7.5 7.5 0 0 1 0 10"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button>
+      <span id="vTime" class="cap sm v-time">0:00 / 0:00</span>
+      <span class="v-spacer"></span>
+      <button id="vFwd" class="btn light v-fwd">Avançar 10s <span class="arr">»</span></button>
+      <button id="vSkip" class="btn warm v-skip">Pular vídeo <span class="arr">→</span></button>
+    </div>
+    <div class="v-bar" id="vBar" role="slider" aria-label="Progresso do vídeo"><i id="vFill"></i></div>
+  </div>
+</div>
+
+
+<!-- ================= DEMO VIDEO (Gargantua) ================= -->
+<div class="demo-ov" id="demoOv" role="dialog" aria-modal="true" aria-label="Demonstração do Gargantua" aria-hidden="true">
+  <div class="demo-box">
+    <div class="demo-head"><span class="cap sm">Solução Endurance · <b>Gargantua</b></span><button class="close-x" id="demoClose" aria-label="Fechar vídeo">×</button></div>
+    <video id="demoVideo" src="assets/gargantua-demo.mp4" poster="assets/gargantua-poster.jpg" playsinline controls preload="metadata"></video>
+  </div>
+</div>
+
+<!-- ================= DOSSIER ================= -->
+<div class="overlay dossier" id="dossier" role="dialog" aria-modal="true" aria-label="Dossiê do case"></div>
+
+<!-- ================= MENU ================= -->
+<div class="overlay menu" id="menu" role="dialog" aria-modal="true" aria-label="Índice">
+  <button class="close-x" id="menuClose" aria-label="Fechar">×</button>
+  <div class="menu-in">
+    <ol id="menuList"></ol>
+    <div class="toggles">
+      <span class="cap sm muted">Preferências</span>
+      <label class="toggle">Movimento reduzido / modo leve<input type="checkbox" id="tReduced"></label>
+      <label class="toggle">Mostrar marcadores de conteúdo pendente<input type="checkbox" id="tPh" checked></label>
+      <p style="font-size:12px;color:var(--muted-night);margin-top:10px;line-height:1.55">Os marcadores indicam onde entram a fotografia oficial e o conteúdo validado de cases e tecnologias, que não estavam acessíveis ao montar esta versão.</p>
+    </div>
+  </div>
+</div>
