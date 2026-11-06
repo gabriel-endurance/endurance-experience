@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { env, send, readBody, rateOk, clientIp } = require("./_lib");
+const { env, send, readBody, rateOk, clientIp, getSession } = require("./_lib");
 
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 const SYSTEM_PROMPT = fs.readFileSync(path.join(process.cwd(), "ai", "system_prompt.md"), "utf8");
@@ -19,6 +19,10 @@ function sanitize(messages) {
 
 module.exports = async (req, res) => {
   if (req.method !== "POST") return send(res, 405, { error: "Método não permitido." });
+  let s;
+  try { s = await getSession(req); } catch (e) { console.error(e); return send(res, 502, { error: "Não foi possível validar o acesso." }); }
+  if (!s) return send(res, 401, { error: "Acesso não encontrado." });
+  if (s.expired) return send(res, 410, { error: "expired" });
   const apiKey = env("GROQ_API_KEY");
   if (!apiKey) return send(res, 503, { error: "GROQ_API_KEY não configurada no servidor." });
   if (!rateOk(clientIp(req))) return send(res, 429, { error: "rate_limited" });

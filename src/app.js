@@ -134,6 +134,7 @@ class Field {
     ctx.globalAlpha = 1;
   }
 }
+/* @core-end — everything above is shared with the gate page (build.sh cuts here) */
 
 // phones: the canvas is taller than the visible area (100vh under the browser bars), so the
 // fingerprint is centered in the band between the nav and the bottom controls instead
@@ -144,7 +145,6 @@ function phoneFieldBand() {
   return bot - top > 200 ? [top, bot - (bot - top) * .08] : null;
 }
 const field = new Field($("#field"), { N: lowPower ? 30 : 44, M: lowPower ? 110 : 150, init: { scale: .45, alpha: .0 }, band: phoneFieldBand });
-const seal = new Field($("#sealCanvas"), { N: 24, M: 120, color: RUST, mouse: false, init: { scale: 1.05, amp: .5, alpha: .85, stretch: 1.25, speed: .16 } });
 
 /* ---------------- FIELD PRESETS ---------------- */
 const MOMENTS = [
@@ -179,141 +179,33 @@ const ACTS = [
   { n: "VI", id: "act-6", title: "What would you build?" }
 ];
 
-/* ---------------- GATE (Act 00) ---------------- */
-const gate = $("#gate");
+/* ---------------- ACCESS (session cookie set by the gate page; the server enforces the deadline) ---------------- */
+const BOOT = window.ENDR || {};
 const fmtDate = d => `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
-const validDate = fmtDate(new Date(Date.now() + 14 * 864e5));
-
-$("#inviteNo").textContent = String(Math.floor(1000 + Math.random() * 8999));
-let pendingCred = null;
-
-/* ---------------- ACCESS TRACKING (server records start time and time on page) ---------------- */
 const postJSON = (path, body) => fetch(path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), keepalive: true });
 let pingTimer = null;
 function pingAccess(leaving) {
-  const token = store.get("endr_token"); if (!token) return;
-  if (leaving && navigator.sendBeacon) navigator.sendBeacon("api/access/ping", new Blob([JSON.stringify({ token })], { type: "application/json" }));
-  else postJSON("api/access/ping", { token }).catch(() => {});
+  if (!pingTimer) return;
+  if (leaving && navigator.sendBeacon) { navigator.sendBeacon("api/access/ping"); return; }
+  postJSON("api/access/ping", {}).then(r => { if (r.status === 401 || r.status === 410) expireAccess(); }).catch(() => {});
 }
 function startTracking() {
-  clearInterval(pingTimer); pingAccess();
+  clearInterval(pingTimer);
   pingTimer = setInterval(() => { if (document.visibilityState === "visible") pingAccess(); }, 30000);
+  pingAccess();
 }
-function stopTracking() { pingAccess(true); clearInterval(pingTimer); pingTimer = null; store.set("endr_token", ""); }
+function stopTracking() { clearInterval(pingTimer); pingTimer = null; }
 document.addEventListener("visibilitychange", () => pingAccess(document.visibilityState === "hidden"));
 addEventListener("pagehide", () => pingAccess(true));
 
-function enterExperience(name, instant) {
-  S.name = (name || "").trim();
-  $("#footName").textContent = S.name || "convidado";
-  renderBuildQ();
-  document.body.classList.remove("locked");
-  window.scrollTo(0, 0);
-  if (instant) { gate.classList.add("gone"); }
-  else {
-    gate.classList.add("closing");
-    setTimeout(() => gate.classList.add("gone"), 1650);
-  }
-  field.set({ alpha: .38, scale: .38 });
-}
-$("#gateForm").addEventListener("submit", async e => {
-  e.preventDefault();
-  const code = $("#gCode").value.trim().toUpperCase(), key = $("#gKey").value.trim();
-  const err = $("#gateErr"), btn = $("#gateForm button[type=submit]");
-  if (!code || !key) { err.textContent = "Informe o código do convite e a chave de acesso."; return; }
-  btn.disabled = true; err.textContent = "";
-  try {
-    const res = await postJSON("api/access/check", { code, key });
-    if (!res.ok) { err.textContent = res.status === 429 ? "Muitas tentativas. Aguarde um minuto e tente novamente." : "Credenciais não reconhecidas. Confira o código do convite e a chave de acesso."; return; }
-  } catch (e) { err.textContent = "Não foi possível validar o acesso agora. Verifique sua conexão."; return; }
-  finally { btn.disabled = false; }
-  pendingCred = { code, key };
-  $("#inviteNo").textContent = code.replace("ENDR-", "");
-  openConsent($("#gName").value.trim());
-});
-
-/* ---------------- CONSENT (confidentiality term) ---------------- */
-const consent = $("#consent"), cName = $("#cName"), cA = $("#cAgree"), cB = $("#cAware"), cSign = $("#cSign");
-function openConsent(name) {
-  cName.value = name || ""; cA.checked = false; cB.checked = false; $("#cErr").textContent = "";
-  $("#cInvite").textContent = $("#inviteNo").textContent;
-  const d = new Date(); $("#cDate").textContent = `${fmtDate(d)} · ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-  updateSig(); consent.classList.add("open"); consent.setAttribute("aria-hidden", "false");
-  setTimeout(() => (name ? cA : cName).focus({ preventScroll: true }), 350);
-}
-function updateSig() {
-  const v = cName.value.trim();
-  $("#cSigPreview").textContent = v || "Sua assinatura";
-  $("#cSigPreview").classList.toggle("empty", !v);
-  cSign.disabled = !(v.length >= 3 && cA.checked && cB.checked);
-}
-[cName, cA, cB].forEach(el => el.addEventListener("input", updateSig));
-[cA, cB].forEach(el => el.addEventListener("change", updateSig));
-$("#cDecline").addEventListener("click", () => {
-  consent.classList.remove("open"); consent.setAttribute("aria-hidden", "true");
-  $("#gKey").value = ""; $("#gateErr").textContent = "Para acessar a experiência, é necessário aceitar o termo de confidencialidade.";
-});
-cSign.addEventListener("click", () => {
-  const name = cName.value.trim();
-  if (cSign.disabled) return;
-  store.set("endr_consent", JSON.stringify({ name, at: new Date().toISOString(), invite: $("#inviteNo").textContent }));
-  store.set("endr_in", "1"); store.set("endr_name", name);
-  startClock(Date.now() + ACCESS_MS);
-  // not awaited: the intro must start inside this click (fullscreen + sound need the user gesture)
-  if (pendingCred) postJSON("api/access/start", { ...pendingCred, name }).then(r => r.ok ? r.json() : null)
-    .then(d => { if (d && d.token) { store.set("endr_token", d.token); store.set("endr_access", d.id); startTracking(); } }).catch(() => {});
-  pendingCred = null;
-  consent.classList.remove("open"); consent.setAttribute("aria-hidden", "true");
-  if (Sound.enabled) { Sound.unlock(); Sound.duck(true); }
-  openIntro(name);                       // runs inside the click: fullscreen + sound are allowed
-});
-
-/* ---------------- INTRO VIDEO (fullscreen, minimal controls) ---------------- */
-const intro = $("#intro"), vid = $("#introVideo"), vPlay = $("#vPlay"), vMute = $("#vMute"), vBar = $("#vBar"), vFill = $("#vFill"), vTime = $("#vTime");
-let introName = "", hideT = null;
-const fmtT = t => `${Math.floor(t / 60)}:${String(Math.floor(t % 60)).padStart(2, "0")}`;
-function openIntro(name) {
-  introName = name;
-  intro.classList.add("open"); intro.setAttribute("aria-hidden", "false");
-  try { const r = intro.requestFullscreen ? intro.requestFullscreen() : (intro.webkitRequestFullscreen && intro.webkitRequestFullscreen()); r && r.catch && r.catch(() => {}); } catch (e) {}
-  vid.currentTime = 0; vid.muted = false;
-  const p = vid.play(); if (p && p.catch) p.catch(() => { intro.classList.add("paused"); });
-  wake();
-}
-function closeIntro() {
-  if (!intro.classList.contains("open")) return;
-  vid.pause();
-  try { if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); else if (document.webkitFullscreenElement) document.webkitExitFullscreen(); } catch (e) {}
-  intro.classList.add("leaving");
-  Sound.duck(false);
-  enterExperience(introName);
-  setTimeout(() => { intro.classList.remove("open", "leaving", "paused"); intro.setAttribute("aria-hidden", "true"); }, 900);
-}
-function togglePlay() { if (vid.paused) { vid.play().catch(() => {}); } else vid.pause(); }
-function wake() { intro.classList.add("ui"); clearTimeout(hideT); hideT = setTimeout(() => { if (!vid.paused) intro.classList.remove("ui"); }, 2600); }
-vid.addEventListener("play", () => { intro.classList.remove("paused"); vPlay.setAttribute("aria-label", "Pausar"); wake(); });
-vid.addEventListener("pause", () => { intro.classList.add("paused", "ui"); vPlay.setAttribute("aria-label", "Reproduzir"); });
-vid.addEventListener("timeupdate", () => { const d = vid.duration || 1; vFill.style.width = (vid.currentTime / d * 100) + "%"; vTime.textContent = `${fmtT(vid.currentTime)} / ${fmtT(vid.duration || 0)}`; });
-vid.addEventListener("ended", closeIntro);
-vid.addEventListener("click", togglePlay);
-vPlay.addEventListener("click", togglePlay);
-$("#vBig").addEventListener("click", togglePlay);
-vMute.addEventListener("click", () => { vid.muted = !vid.muted; intro.classList.toggle("muted", vid.muted); vMute.setAttribute("aria-label", vid.muted ? "Ativar som" : "Silenciar"); });
-$("#vFwd").addEventListener("click", () => { vid.currentTime = Math.min((vid.duration || 0) - .2, vid.currentTime + 10); wake(); });
-$("#vSkip").addEventListener("click", closeIntro);
-vBar.addEventListener("click", e => { const r = vBar.getBoundingClientRect(); vid.currentTime = clamp((e.clientX - r.left) / r.width) * (vid.duration || 0); wake(); });
-intro.addEventListener("pointermove", wake);
-addEventListener("keydown", e => {
-  if (!intro.classList.contains("open")) return;
-  if (e.key === " " || e.key === "k") { e.preventDefault(); togglePlay(); }
-  if (e.key === "ArrowRight") { vid.currentTime = Math.min((vid.duration || 0) - .2, vid.currentTime + 10); wake(); }
-});
-if (store.get("endr_in") === "1") enterExperience(store.get("endr_name") || "", true);
-else { document.body.classList.add("locked"); setTimeout(() => $("#gName").focus({ preventScroll: true }), 400); }
+S.name = String(BOOT.name || "").trim();
+$("#footName").textContent = S.name || "convidado";
+renderBuildQ();
+field.set({ alpha: .38, scale: .38 });
 
 
-/* ---------------- ACCESS CLOCK (08h from signature) ---------------- */
-const ACCESS_MS = 8 * 3600 * 1000;           // 08 horas — altere aqui se o prazo mudar
+/* ---------------- ACCESS CLOCK (04h from the code's first signature) ---------------- */
+const ACCESS_MS = 4 * 3600 * 1000;           // only draws the ring; the deadline itself comes from the server (api/_lib.js)
 const clockEl = $("#clock"), clockTime = $("#clockTime"), clockArc = $("#clockArc");
 let clockDeadline = 0, clockTimer = null;
 const CIRC_C = 2 * Math.PI * 15.5;
@@ -324,19 +216,24 @@ function tickClock() {
   clockTime.textContent = fmtHMS(left);
   clockArc.style.strokeDashoffset = (CIRC_C * (1 - clamp(left / ACCESS_MS))).toFixed(2);
   clockEl.classList.toggle("warn", left <= 15 * 60 * 1000);
-  if (left <= 0) {
-    stopClock(); clockEl.classList.remove("on"); stopTracking();
-    const ex = $("#expired"); ex.classList.add("open"); ex.setAttribute("aria-hidden", "false"); document.body.classList.add("locked");
-  }
+  if (left <= 0) expireAccess();
+}
+function expireAccess() {
+  const ex = $("#expired"); if (ex.classList.contains("open")) return;
+  stopClock(); stopTracking();
+  ex.classList.add("open"); ex.setAttribute("aria-hidden", "false"); document.body.classList.add("locked");
+  // take the content out of the page once the deadline passes
+  $("#experience").remove();
+  fetch("api/access/logout", { method: "POST" }).catch(() => {});
 }
 function startClock(deadline) {
-  clockDeadline = deadline; store.set("endr_deadline", String(deadline));
+  clockDeadline = deadline;
   const d = new Date(deadline); $("#footValid").textContent = `${fmtDate(d)} ${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
   clockEl.classList.add("on"); clearInterval(clockTimer); tickClock(); clockTimer = setInterval(tickClock, 1000);
 }
 function stopClock() { clearInterval(clockTimer); clockTimer = null; clockEl.classList.remove("on"); }
 $("#expBack").addEventListener("click", () => returnToGate());
-{ const dl = +store.get("endr_deadline"); if (store.get("endr_in") === "1") { startClock(dl > 0 ? dl : Date.now() + ACCESS_MS); if (store.get("endr_token")) startTracking(); } }
+startClock(+BOOT.expires || Date.now()); startTracking();
 
 /* ---------------- NAV / MENU ---------------- */
 const ticks = $("#ticks"), menuList = $("#menuList");
@@ -347,15 +244,8 @@ const ticks = $("#ticks"), menuList = $("#menuList");
   menuList.appendChild(li);
 }
 function returnToGate() {
-  store.set("endr_in", ""); store.set("endr_name", ""); store.set("endr_consent", ""); store.set("endr_deadline", "");
-  stopTracking(); stopClock(); $("#expired").classList.remove("open"); $("#expired").setAttribute("aria-hidden", "true");
-  if (comp.classList.contains("open")) toggleCompanion(false);
-  $("#gateForm").reset(); $("#gateErr").textContent = "";
-  gate.classList.remove("gone");
-  void gate.offsetWidth;            // reflow so the iris re-opens
-  gate.classList.remove("closing");
-  document.body.classList.add("locked");
-  setTimeout(() => { window.scrollTo(0, 0); $("#gName").focus({ preventScroll: true }); }, 900);
+  stopTracking(); stopClock();
+  fetch("api/access/logout", { method: "POST" }).catch(() => {}).finally(() => location.replace("/"));
 }
 ACTS.forEach((a, i) => {
   const b = document.createElement("button");
@@ -378,7 +268,7 @@ function closeOverlay(el) { el.classList.remove("open"); document.body.style.ove
 $("#menuBtn").addEventListener("click", () => openOverlay($("#menu")));
 $("#menuClose").addEventListener("click", () => closeOverlay($("#menu")));
 addEventListener("keydown", e => {
-  if (e.key !== "Escape" || $("#intro").classList.contains("open")) return;
+  if (e.key !== "Escape") return;
   if ($("#menu").classList.contains("open")) closeOverlay($("#menu"));
   else if ($("#dossier").classList.contains("open")) closeOverlay($("#dossier"));
   else if (comp.classList.contains("open")) toggleCompanion(false);
@@ -557,7 +447,7 @@ const Sound = (() => {
   };
 })();
 // unlock on the first gesture (browsers only allow audio after one)
-["pointerdown", "keydown"].forEach(ev => addEventListener(ev, () => { if (Sound.enabled && !$("#intro").classList.contains("open")) Sound.unlock(); }, { passive: true }));
+["pointerdown", "keydown"].forEach(ev => addEventListener(ev, () => { if (Sound.enabled) Sound.unlock(); }, { passive: true }));
 function renderSoundBtn() { const b = $("#soundBtn"); b.classList.toggle("on", Sound.enabled); b.setAttribute("aria-pressed", Sound.enabled); $("#soundLbl").textContent = Sound.enabled ? "Som" : "Som off"; }
 $("#soundBtn").addEventListener("click", () => { Sound.toggle(); renderSoundBtn(); });
 renderSoundBtn();
@@ -1179,6 +1069,7 @@ function updateLoop(p) {
 async function groqSample(input, opts = {}) {
   const messages = typeof input === "string" ? [{ role: "user", content: input }] : input;
   const res = await fetch("api/chat", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ messages, kind: opts.modelTier === "quick" ? "chat" : "explore" }), signal: opts.signal });
+  if (res.status === 401 || res.status === 410) { expireAccess(); throw new Error("Seu tempo de acesso terminou."); }
   if (!res.ok) {
     let msg = ""; try { msg = (await res.json()).error || ""; } catch (e) {}
     const err = new Error(msg === "rate_limited" ? "" : msg); if (res.status === 429) err.code = "rate_limited"; throw err;
@@ -1416,7 +1307,6 @@ function loop(now) {
   scrollTick();
   field.step(dt);
   if (!S.reduced || frame % 4 === 0) field.draw();
-  if (!gate.classList.contains("gone")) { seal.step(dt); seal.draw(); }
   if (E.visible) renderEngine(now / 1000, dt);
   for (const m of motifs) if (m.visible && (!S.reduced || frame % 20 === 0)) drawMotif(m, now / 1000 + m.seed);
   if (S.scene === "moments") { $("#roA").textContent = field.P.amp.toFixed(2); $("#roF").textContent = field.P.freq.toFixed(2); }

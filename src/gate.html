@@ -1,0 +1,91 @@
+<div class="grain" aria-hidden="true"></div>
+
+<!-- ================= ATO 00 — PRIVATE INVITATION ================= -->
+<section id="gate" aria-label="Convite privado">
+  <div class="gate-top">
+    <img class="gate-logo" src="assets/endurance-horizontal-navy.png" alt="Endurance — Feel Different">
+    <span class="cap sm">Private invitation · Nº <span id="inviteNo">0427</span></span>
+  </div>
+  <div class="gate-body">
+    <div class="gate-copy">
+      <span class="cap sm">Ato 00</span>
+      <h1 style="margin-top:18px">Something is waiting for you <em>to feel</em> it first.</h1>
+      <p>Este é um acesso individual e temporário a uma experiência da Endurance que ainda não foi amplamente revelada.</p>
+    </div>
+    <div class="seal" aria-hidden="true">
+      <svg class="seal-ring" viewBox="0 0 200 200"><defs><path id="sealPath" d="M100,100 m-92,0 a92,92 0 1,1 184,0 a92,92 0 1,1 -184,0"/></defs>
+        <text font-family="Instrument Sans" font-size="7.4" letter-spacing="3.2" fill="#2c3b4e" opacity=".7"><textPath href="#sealPath">AI LAB FOR HUMAN INTELLIGENCE · FEEL FIRST · UNDERSTAND NEXT · IMAGINE WHAT FOLLOWS ·</textPath></text></svg>
+      <canvas id="sealCanvas"></canvas>
+    </div>
+    <form class="gate-form" id="gateForm" autocomplete="off" novalidate>
+      <label class="field-row"><span class="cap sm">Seu nome</span><input id="gName" name="name" placeholder="Como devemos chamá-lo" maxlength="40"></label>
+      <label class="field-row"><span class="cap sm">Código do convite</span><input id="gCode" name="code" placeholder="ENDR-0000" maxlength="24"></label>
+      <label class="field-row"><span class="cap sm">Chave de acesso</span><input id="gKey" name="key" type="password" placeholder="••••••" maxlength="40"></label>
+      <button class="btn solid" type="submit">Entrar <span class="arr">→</span></button>
+      <div class="gate-err" id="gateErr" role="alert"></div>
+    </form>
+  </div>
+  <div class="gate-bot">
+    <span class="cap sm">Acesso individual · <span id="validUntil">04 horas</span> a partir da primeira assinatura do termo</span>
+    <p class="gate-note">As credenciais são verificadas no servidor. Cada acesso recebe um identificador próprio, e o início e o tempo de permanência são registrados.</p>
+  </div>
+</section>
+
+<!-- ================= CONSENT — termo de confidencialidade ================= -->
+<div class="consent" id="consent" role="dialog" aria-modal="true" aria-labelledby="cTitle" aria-hidden="true">
+  <div class="consent-card">
+    <div class="consent-head">
+      <span class="cap sm c-flag">Acesso confidencial</span>
+      <span class="cap sm muted">Convite Nº <span id="cInvite">—</span></span>
+    </div>
+    <h2 id="cTitle">Antes de entrar, um acordo de confiança.</h2>
+    <div class="c-alert">
+      <b>Conteúdo estritamente confidencial.</b> Esta experiência apresenta pesquisas, metodologias, tecnologias e projetos da Endurance que ainda não foram tornados públicos. O acesso é pessoal, intransferível e temporário.
+    </div>
+    <div class="c-window">
+      <div class="c-window-clock"><span class="mono-num">04:00:00</span></div>
+      <p><b>Você terá 04 horas para consumir este conteúdo.</b> A contagem começa na primeira assinatura com este convite e segue visível no canto da tela durante toda a experiência. Ao final do prazo, o acesso é encerrado, mesmo que você saia e entre novamente.</p>
+    </div>
+    <div class="c-terms" tabindex="0" aria-label="Termo de confidencialidade">
+      <p class="cap sm">Termo de confidencialidade e consentimento <span class="ph-tag">minuta · revisar com o jurídico</span></p>
+      <ol>
+        <li><b>Confidencialidade.</b> Todo o conteúdo desta experiência, incluindo textos, imagens, vídeos, dados, metodologias, tecnologias e cases, é informação confidencial da Endurance.</li>
+        <li><b>Uso restrito.</b> O conteúdo destina-se exclusivamente à avaliação de uma possível relação comercial, de parceria ou de investimento com a Endurance.</li>
+        <li><b>Não divulgação.</b> Você se compromete a não copiar, gravar, capturar a tela, reproduzir, compartilhar ou divulgar, total ou parcialmente, o conteúdo a terceiros sem autorização prévia e por escrito.</li>
+        <li><b>Acesso individual e temporário.</b> Suas credenciais são pessoais e intransferíveis. O acesso é válido por 04 horas a partir da primeira assinatura deste termo com o seu convite e pode ser revogado a qualquer momento.</li>
+        <li><b>Registro de acesso.</b> Seu acesso e o aceite deste termo poderão ser registrados (nome, data e hora), de acordo com a política de privacidade da Endurance e com a legislação aplicável.</li>
+        <li><b>Vigência.</b> As obrigações de confidencialidade permanecem válidas mesmo após o término do seu acesso.</li>
+      </ol>
+    </div>
+    <label class="c-check"><input type="checkbox" id="cAgree"> <span>Li e concordo com o termo de confidencialidade.</span></label>
+    <label class="c-check"><input type="checkbox" id="cAware"> <span>Entendo que meu acesso é individual, intransferível e pode ser registrado.</span></label>
+    <div class="c-sign">
+      <label class="field-row"><span class="cap sm">Nome completo · assinatura eletrônica</span><input id="cName" maxlength="80" autocomplete="name" placeholder="Digite seu nome completo"></label>
+      <div class="c-sig"><span class="c-sig-preview empty" id="cSigPreview">Sua assinatura</span><span class="cap sm muted" id="cDate">—</span></div>
+    </div>
+    <div class="c-actions">
+      <button class="btn" type="button" id="cDecline">Recusar</button>
+      <button class="btn solid" type="button" id="cSign" disabled>Assinar e continuar <span class="arr">→</span></button>
+    </div>
+    <p class="c-note" id="cErr" role="alert"></p>
+    <p class="c-note">Ao assinar, o início do seu acesso e o tempo de permanência são registrados pela Endurance.</p>
+  </div>
+</div>
+
+<!-- ================= INTRO VIDEO ================= -->
+<div class="intro" id="intro" aria-hidden="true" aria-label="Vídeo de abertura">
+  <video id="introVideo" src="assets/manifesto.mp4" poster="assets/manifesto-poster.jpg" playsinline preload="metadata"></video>
+  <div class="v-top"><img src="assets/endurance-horizontal-cream.png" alt="Endurance"><span class="cap sm">Manifesto</span></div>
+  <button class="v-big" id="vBig" aria-label="Reproduzir">▶</button>
+  <div class="v-bar-wrap">
+    <div class="v-ctrl">
+      <button id="vPlay" class="v-btn v-play" aria-label="Pausar"><i></i></button>
+      <button id="vMute" class="v-btn v-mute" aria-label="Silenciar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z" fill="currentColor" stroke="none"/><path class="w1" d="M16 9.5a4 4 0 0 1 0 5"/><path class="w2" d="M18.5 7a7.5 7.5 0 0 1 0 10"/><path class="x" d="M16 9l5 6M21 9l-5 6"/></svg></button>
+      <span id="vTime" class="cap sm v-time">0:00 / 0:00</span>
+      <span class="v-spacer"></span>
+      <button id="vFwd" class="btn light v-fwd">Avançar 10s <span class="arr">»</span></button>
+      <button id="vSkip" class="btn warm v-skip">Pular vídeo <span class="arr">→</span></button>
+    </div>
+    <div class="v-bar" id="vBar" role="slider" aria-label="Progresso do vídeo"><i id="vFill"></i></div>
+  </div>
+</div>
