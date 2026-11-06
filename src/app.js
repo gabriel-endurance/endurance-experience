@@ -57,7 +57,7 @@ class Field {
     this.N = opt.N || 44; this.M = opt.M || 150;
     this.fixedColor = opt.color || null;
     this.P = { ...BASE, ...(opt.init || {}) }; this.T = { ...this.P };
-    this.t = Math.random() * 100; this.useMouse = opt.mouse !== false;
+    this.t = Math.random() * 100; this.useMouse = opt.mouse !== false; this.bandFn = opt.band || null;
     this.resize(); addEventListener("resize", () => this.resize());
   }
   resize() {
@@ -65,6 +65,7 @@ class Field {
     const w = this.c.clientWidth || innerWidth, h = this.c.clientHeight || innerHeight;
     this.c.width = Math.round(w * dpr); this.c.height = Math.round(h * dpr);
     this.w = w; this.h = h; this.dpr = dpr;
+    this.band = this.bandFn ? this.bandFn() : null;
   }
   set(o) { Object.assign(this.T, o); }
   preset(o) { this.T = { ...BASE, ...o }; }
@@ -84,7 +85,7 @@ class Field {
     const rgb = `rgb(${col[0]},${col[1]},${col[2]})`;
     ctx.strokeStyle = rgb; ctx.fillStyle = rgb; ctx.lineWidth = 1;
     const mx = S.mouse.sx, my = S.mouse.sy;
-    let cx = P.cx * w, cy = P.cy * h;
+    let cx = P.cx * w, cy = this.band ? lerp(this.band[0], this.band[1], P.cy) : P.cy * h;
     if (this.useMouse && P.follow > 0) { cx = lerp(cx, mx, P.follow * .35); cy = lerp(cy, my, P.follow * .35); }
     const t = this.t, N = this.N, M = this.M;
     const R = Math.hypot(w, h) * .5 * P.scale * (1 + Math.sin(t * 1.6) * P.breath);
@@ -134,7 +135,15 @@ class Field {
   }
 }
 
-const field = new Field($("#field"), { N: lowPower ? 30 : 44, M: lowPower ? 110 : 150, init: { scale: .45, alpha: .0 } });
+// phones: the canvas is taller than the visible area (100vh under the browser bars), so the
+// fingerprint is centered in the band between the nav and the bottom controls instead
+const mqPhone = window.matchMedia("(max-width: 760px)");
+function phoneFieldBand() {
+  if (!mqPhone.matches) return null;
+  const top = $("#nav").getBoundingClientRect().bottom, bot = $("#clock").getBoundingClientRect().top;
+  return bot - top > 200 ? [top, bot - (bot - top) * .08] : null;
+}
+const field = new Field($("#field"), { N: lowPower ? 30 : 44, M: lowPower ? 110 : 150, init: { scale: .45, alpha: .0 }, band: phoneFieldBand });
 const seal = new Field($("#sealCanvas"), { N: 24, M: 120, color: RUST, mouse: false, init: { scale: 1.05, amp: .5, alpha: .85, stretch: 1.25, speed: .16 } });
 
 /* ---------------- FIELD PRESETS ---------------- */

@@ -1147,6 +1147,12 @@ button,a,label,.instr{-webkit-tap-highlight-color:transparent}
   .stages{bottom:calc(84px + env(safe-area-inset-bottom))}
   .moment-word{font-size:clamp(36px,11vw,60px)}
   .moment-q{font-size:20px}
+  /* Moments: one centered axis, inside the band between the nav and the bottom controls */
+  .moment-stage{justify-items:center;gap:clamp(24px,5vh,40px);padding:72px var(--pad) calc(190px + env(safe-area-inset-bottom))}
+  .moment-guide,.moment-word{width:100%}
+  .moment-q{margin:0 auto;max-width:22ch}
+  /* sits above the contextual hint pill, which occupies the strip right over the clock */
+  #readout{bottom:calc(144px + env(safe-area-inset-bottom));right:var(--pad);justify-content:center;text-align:center;column-gap:16px;row-gap:6px}
   .trans-copy{font-size:clamp(34px,10vw,48px);top:18%}
   .reveal-logo{height:clamp(120px,22vh,180px)}
 
@@ -1154,6 +1160,12 @@ button,a,label,.instr{-webkit-tap-highlight-color:transparent}
   .t-hero .identity-h,#thesis .identity-h{font-size:clamp(34px,9.6vw,46px)}
   .pr-copy .ln{font-size:clamp(34px,10vw,48px)}
   .t-hero-foot{bottom:calc(16px + env(safe-area-inset-bottom));padding-top:12px;min-height:72px}
+  /* "Nosso foco": the iceberg drawing is too small to read on phones, so only the caption remains */
+  .ice-close{margin-top:clamp(40px,7vh,64px)}
+  .ice-close svg{display:none}
+  .ice-close .ice-cap{margin-top:0;gap:22px;padding-top:22px;border-top:1px solid var(--line-paper)}
+  .ice-close .ice-cap span{font-size:26px}
+  #thesis-body{padding-bottom:clamp(96px,14vh,140px)}
 
   /* Act III — engine chart zooms into the selected sector (see app.js) */
   .engine-grid .instrument{display:flex;flex-direction:column;height:auto;aspect-ratio:auto;width:calc(100% + 2 * var(--pad));margin:0 calc(-1 * var(--pad))}
@@ -1216,6 +1228,11 @@ button,a,label,.instr{-webkit-tap-highlight-color:transparent}
   .comp-foot{padding-bottom:calc(16px + env(safe-area-inset-bottom))}
   .companion{width:100%}
   .demo-ov{padding:12px}
+}
+/* desktop: the research menu grows with the page instead of scrolling inside the carousel */
+@media (min-width:981px){
+  .carousel{height:auto;min-height:max(100vh,680px)}
+  .cz-menu{overflow:visible}
 }
 @media (max-width:760px) and (max-height:720px){
   .loop-lede{display:none}
@@ -1730,7 +1747,7 @@ class Field {
     this.N = opt.N || 44; this.M = opt.M || 150;
     this.fixedColor = opt.color || null;
     this.P = { ...BASE, ...(opt.init || {}) }; this.T = { ...this.P };
-    this.t = Math.random() * 100; this.useMouse = opt.mouse !== false;
+    this.t = Math.random() * 100; this.useMouse = opt.mouse !== false; this.bandFn = opt.band || null;
     this.resize(); addEventListener("resize", () => this.resize());
   }
   resize() {
@@ -1738,6 +1755,7 @@ class Field {
     const w = this.c.clientWidth || innerWidth, h = this.c.clientHeight || innerHeight;
     this.c.width = Math.round(w * dpr); this.c.height = Math.round(h * dpr);
     this.w = w; this.h = h; this.dpr = dpr;
+    this.band = this.bandFn ? this.bandFn() : null;
   }
   set(o) { Object.assign(this.T, o); }
   preset(o) { this.T = { ...BASE, ...o }; }
@@ -1757,7 +1775,7 @@ class Field {
     const rgb = `rgb(${col[0]},${col[1]},${col[2]})`;
     ctx.strokeStyle = rgb; ctx.fillStyle = rgb; ctx.lineWidth = 1;
     const mx = S.mouse.sx, my = S.mouse.sy;
-    let cx = P.cx * w, cy = P.cy * h;
+    let cx = P.cx * w, cy = this.band ? lerp(this.band[0], this.band[1], P.cy) : P.cy * h;
     if (this.useMouse && P.follow > 0) { cx = lerp(cx, mx, P.follow * .35); cy = lerp(cy, my, P.follow * .35); }
     const t = this.t, N = this.N, M = this.M;
     const R = Math.hypot(w, h) * .5 * P.scale * (1 + Math.sin(t * 1.6) * P.breath);
@@ -1807,7 +1825,15 @@ class Field {
   }
 }
 
-const field = new Field($("#field"), { N: lowPower ? 30 : 44, M: lowPower ? 110 : 150, init: { scale: .45, alpha: .0 } });
+// phones: the canvas is taller than the visible area (100vh under the browser bars), so the
+// fingerprint is centered in the band between the nav and the bottom controls instead
+const mqPhone = window.matchMedia("(max-width: 760px)");
+function phoneFieldBand() {
+  if (!mqPhone.matches) return null;
+  const top = $("#nav").getBoundingClientRect().bottom, bot = $("#clock").getBoundingClientRect().top;
+  return bot - top > 200 ? [top, bot - (bot - top) * .08] : null;
+}
+const field = new Field($("#field"), { N: lowPower ? 30 : 44, M: lowPower ? 110 : 150, init: { scale: .45, alpha: .0 }, band: phoneFieldBand });
 const seal = new Field($("#sealCanvas"), { N: 24, M: 120, color: RUST, mouse: false, init: { scale: 1.05, amp: .5, alpha: .85, stretch: 1.25, speed: .16 } });
 
 /* ---------------- FIELD PRESETS ---------------- */
