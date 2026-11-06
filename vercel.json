@@ -3,6 +3,7 @@
   "buildCommand": "sh src/build.sh",
   "outputDirectory": "public",
   "rewrites": [{ "source": "/admin", "destination": "/api/admin" }],
+  "crons": [{ "path": "/api/keepalive", "schedule": "0 9 * * *" }],
   "functions": {
     "api/chat.js": { "maxDuration": 60, "includeFiles": "ai/**" },
     "api/admin.js": { "includeFiles": "admin/**" }

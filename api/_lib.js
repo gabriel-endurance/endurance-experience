@@ -67,4 +67,4 @@ function supabase(pathAndQuery, { method = "GET", body, prefer } = {}) {
   return fetch(`${env("SUPABASE_URL").replace(/\/$/, "")}/rest/v1/${pathAndQuery}`, { method, headers, body: body === undefined ? undefined : JSON.stringify(body) });
 }
 
-module.exports = { env, HEARTBEAT_GAP, sha256, clientIp, rateOk, send, readBody, validCredentials, newAccessId, adminOk, askAuth, supabase };
+module.exports = { env, HEARTBEAT_GAP, sha256, safeEqual, clientIp, rateOk, send, readBody, validCredentials, newAccessId, adminOk, askAuth, supabase };
